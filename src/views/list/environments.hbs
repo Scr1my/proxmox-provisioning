@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Environment</h2>
+  <a href="/form/environment" class="btn btn-primary">+ Add Environment</a>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Username</th>
+        <th>Token Name</th>
+        <th>Machine LAN</th>
+        <th>Details</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each envs}}
+        <tr>
+          <td><span class="badge bg-secondary">{{this.id}}</span></td>
+          <td><strong>{{this.name}}</strong></td>
+          <td>{{this.username}}</td>
+          <td><code>{{this.token_name}}</code></td>
+          <td><code>{{this.machine_lan}}</code></td>
+          <td>
+            <a href="/list/environment/{{this.id}}" class="btn btn-sm me-1 btn-secondary">
+              <i class="bi bi-search"></i>
+            </a>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-danger" onclick="deleteEnv({{this.id}})">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      {{else}}
+        <tr>
+          <td colspan="10" class="text-center text-muted py-4">
+            No environments found
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+<script>
+  function deleteEnv(id) {
+    if (!confirm(`Are you sure to delete the environment ${id}?`)) return;
+
+    fetch(`/environment/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(async (response) => {
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error: ${response.status}`);
+      }
+      window.location.reload();
+    })
+    .catch(err => {
+      console.error('Error delete env:', err);
+      alert('error deleting env.');
+    });
+  }
+</script>

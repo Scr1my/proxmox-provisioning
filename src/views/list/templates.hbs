@@ -1,0 +1,60 @@
+<h1>Templates list</h1>
+  <!-- ── Machine Types ── -->
+  <details class="type-card">
+    <summary>
+    Machine Types
+    <span>{{machine_types.length}}</span>
+
+    </summary>
+  {{#if machine_types.length}}
+  <div class="types-grid">
+    {{#each machine_types}}
+    <div>
+        <span class="type-name">{{this.name}}</span>
+    </div>
+    
+    {{/each}}
+  </div>
+  {{else}}
+    <p>Nessun machine type trovato.</p>
+  {{/if}}
+</details>
+  <!-- ── Templates ── -->
+  <p class="section-title" style="margin-bottom:1rem;">
+    Machine Templates
+    <span >{{machine_templates.length}}</span>
+  </p>
+    
+  {{#if machine_templates.length}}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>OS</th>
+          <th>RAM</th>
+          <th>Cores</th>
+          <th>Provisioning script</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each machine_templates}}
+        <tr>
+          <td>{{this.id}}</td>
+          <td>{{this.name}}</td>
+          <td>{{this.machine_type.name}}</td>
+          <td>{{this.ram}}</td>
+          <td>{{this.cores}}</td>
+          <td>
+            {{#if this.provisiong_script}}YES{{else}}NO{{/if}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+  
+    <p>Nessun template trovato.</p>
+  {{/if}}
+

@@ -1,0 +1,102 @@
+<style>
+    .table-responsive {
+  overflow: visible;
+}
+</style>
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="bi bi-hdd-rack me-2"></i>Machines</h2>
+        <span class="badge bg-secondary fs-6">{{machines.length}} machines</span>
+    </div>
+
+    {{#unless  (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+        <span>username: {{user.username}}</span>
+    {{/unless }}
+    {{#if machines}}
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>VMID</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>IP</th>
+                        <th>Hostname</th>
+                        <th>Template</th>
+                        {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+                            <th>Username</th>
+                        {{/if}}
+                        <th>Password</th>
+                        <th>Actions</th>
+                        <th style="width:48px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each machines}}
+                        {{> machineCard this user=../user}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{else}}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>Nessuna macchina trovata.
+    </div>
+    {{/if}}
+
+</div>
+<script>
+    async function fetchStatus(vmid, nodeId, type) {
+        try {
+            const res = await fetch(`/api/machine/${vmid}/status?nodeId=${nodeId}&type=${type}`);
+            const { status } = await res.json();
+
+            const badge = document.getElementById(`status-${vmid}`);
+            const colors = {
+                'running': 'bg-success',
+                'stopped': 'bg-danger',
+                'paused':  'bg-warning'
+            };
+
+            badge.className = `badge ${colors[status] ?? 'bg-secondary'}`;
+            badge.textContent = status;
+            applyStatusButtons(vmid, status);
+        } catch {
+            document.getElementById(`status-${vmid}`).textContent = '?';
+        }
+    }
+
+    function initStatuses(machines) {
+        machines.forEach(({ vmid, nodeId, type }) => fetchStatus(vmid, nodeId, type));
+
+        setInterval(() => {
+            machines.forEach(({ vmid, nodeId, type }) => fetchStatus(vmid, nodeId, type));
+        }, 60_000);
+    }
+
+    initStatuses([
+        {{#each machines}}
+        { vmid: {{this.vmid}}, nodeId: "{{this.requestMachine.environment_node_id}}", type: "{{this.machine_type}}" }{{#unless @last}},{{/unless}}
+        {{/each}}
+    ]);
+
+    function applyStatusButtons(vmid, status) {
+        const start    = document.getElementById(`start-${vmid}`);
+        const shutdown = document.getElementById(`shutdown-${vmid}`);
+        const reboot   = document.getElementById(`reboot-${vmid}`);
+
+        if (!start || !shutdown || !reboot) return;
+
+        const isRunning = status === 'running';
+
+        // start e reboot: visibili solo se spento
+        start.classList.toggle('d-none', isRunning);
+        reboot.classList.toggle('d-none', !isRunning);
+
+        // shutdown: visibile solo se acceso
+        shutdown.classList.toggle('d-none', !isRunning);
+    }
+</script>

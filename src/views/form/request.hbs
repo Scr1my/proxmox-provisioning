@@ -1,0 +1,111 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">New Request</h2>
+</div>
+
+{{> flash-message}}
+
+<form action="/request" method="POST">
+  <div class="row g-3 mb-4">
+
+    <!-- Approver -->
+    <div class="col-md-6">
+      <label class="form-label">Approver</label>
+      <select name="approverId" class="form-select">
+        {{#each approvers}}
+          <option value="{{this.id}}">{{this.username}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <!-- Observation -->
+    <div class="col-12">
+      <label class="form-label">Observation</label>
+      <textarea name="observation" class="form-control" rows="3" placeholder="Inserisci observation..."></textarea>
+    </div>
+
+  </div>
+
+  <!-- Machines -->
+  <div class="card border-secondary p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="text-secondary mb-0">Machines</h6>
+      <button type="button" id="add-machine-btn" class="btn btn-sm btn-outline-secondary">+ Add machines</button>
+    </div>
+    <div id="machines-container" class="d-flex flex-column gap-3">
+      <div class="machine card border-secondary p-3">
+        <h6 class="card-title text-secondary mb-3">Machine 1</h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Hostname</label>
+            <input type="text" name="machines[0][hostname]" class="form-control" placeholder="es. server-01">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Template</label>
+            <select name="machines[0][templateId]" class="form-select">
+              {{#each templates}}
+                <option value="{{this.id}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary">
+      Invia Request
+    </button>
+  </div>
+</form>
+
+<!-- Template -->
+<template id="machine-template">
+  <div class="machine card border-secondary p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="card-title text-secondary mb-0">Machine __DISPLAY__</h6>
+      <button type="button" class="btn btn-sm btn-outline-danger remove-machine-btn">✕ Rimuovi</button>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Hostname</label>
+        <input type="text" name="machines__INDEX__[hostname]" class="form-control" placeholder="es. server-01">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Template</label>
+        <select name="machines__INDEX__[templateId]" class="form-select">
+          {{#each templates}}
+            <option value="{{this.id}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+let machineCount = 1;
+
+const addMachineBtn = document.getElementById('add-machine-btn');
+const container = document.getElementById('machines-container');
+const template = document.getElementById('machine-template');
+
+addMachineBtn.addEventListener('click', () => {
+  const clone = template.content.cloneNode(true);
+  const htmlString = clone.firstElementChild.outerHTML
+    .replace(/__INDEX__/g, `[${machineCount}]`)
+    .replace(/__DISPLAY__/g, machineCount + 1);
+
+  const div = document.createElement('div');
+  div.innerHTML = htmlString;
+
+  const machineEl = div.firstElementChild;
+  machineEl.querySelector('.remove-machine-btn').addEventListener('click', () => {
+    machineEl.remove();
+  });
+
+  container.appendChild(machineEl);
+  machineCount++;
+});
+</script>

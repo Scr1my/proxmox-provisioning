@@ -1,0 +1,149 @@
+<div class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Request</h2>
+  <a href="/form/request" class="btn btn-primary">+ Make Request</a>
+</div>
+
+{{> flash-message}}
+
+<div class="table-responsive">
+  <table class="table tablesorter table-hover" id="requests">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Request</th>
+        {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+          <th>Requester</th>
+        {{/if}}
+        <th>Approver</th>
+        <th class="text-center filter-select filter-exact">Status</th>
+        <th class="text-center">Machines</th>
+        <th>Created at</th>
+        <th>Closed at</th>
+        {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+          <th class="text-center">Actions</th>
+        {{/if}}
+      </tr>
+    </thead>
+    <tbody>
+{{#each requests}}
+
+  {{> requestCard this user=../user}}
+    
+{{else}}
+    <tr>
+        <td colspan="9" class="text-center py-4 text-muted">
+            Nessuna richiesta disponibile
+        </td>
+    </tr>
+{{/each}}
+</tbody>
+  </table>
+</div>
+</div>
+<script>
+  function makeDateFilter($cell, indx) {
+  var $input = $('<input type="date" class="form-control form-control-sm">')
+    .appendTo($cell)
+    .on('change', function () {
+      var val = $(this).val();
+      $hidden.val(val ? '>= ' + val : '').trigger('search');
+    });
+
+  var $hidden = $('<input type="hidden">').appendTo($cell);
+
+  // reset globale filtri
+  $cell.closest('table').on('filterReset', function () {
+    $input.val('');
+    $hidden.val('');
+    $.tablesorter.filter.formatterUpdated($cell, indx);
+  });
+
+  $.tablesorter.filter.formatterUpdated($cell, indx);
+  return $hidden;
+}
+  $(function () {
+  $("#requests").tablesorter({
+    theme: "bootstrap",
+    cssChildRow: "tablesorter-childRow",
+    headerTemplate: "{content} {icon}",
+    widgets: ["filter"],
+    widgetOptions: {
+      filter_selectSource: {
+        {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+          4: ["", "ALL", "PENDING", "APPROVED", "REJECTED", "COMPLETED", "INPROGRESS"]
+        {{else}}
+          3: ["", "ALL", "PENDING", "APPROVED", "REJECTED", "COMPLETED", "INPROGRESS"]
+        {{/if}}
+      },
+
+      filter_liveSearch: true,
+
+      filter_showClearAll: true,
+
+      filter_ignoreCase: true,
+      filter_cssFilter: [
+        'd-none',
+        'd-none',
+        'form-control',
+        'form-control',
+        'form-control',
+        'form-control',
+        'form-control',
+        'form-control',
+        'd-none'
+      ],
+      filter_formatter: {
+        {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+          6: function ($cell, indx) { return makeDateFilter($cell, indx); },
+          7: function ($cell, indx) { return makeDateFilter($cell, indx); },
+        {{else}}
+          5: function ($cell, indx) { return makeDateFilter($cell, indx); },
+          6: function ($cell, indx) { return makeDateFilter($cell, indx); },
+        {{/if}}
+      }
+    },
+    headers: {
+        0: { sorter: false },
+        8: { sorter: false }
+      },
+    sortList: [[0, 0]]
+  });
+
+});
+
+$(document).on('change', '#requests .tablesorter-filter-row select', function () {
+    var statusVal = $(this).val();
+    var currentUrl = new URL(window.location.href);
+
+    if (statusVal === 'ALL') {
+      currentUrl.searchParams.set('status', "");
+    } else if (statusVal) {
+      currentUrl.searchParams.set('status', statusVal);
+    } else {
+      currentUrl.searchParams.delete('status');
+    }
+
+    window.location.href = currentUrl.toString();
+  });
+
+  // preset: imposta la select al valore nell'URL
+  var params = new URLSearchParams(window.location.search);
+  var presetStatus = params.get('status') || '';
+  if (presetStatus) {
+    // aspetta che tablesorter abbia generato la riga filtri
+    setTimeout(function () {
+      $('#requests .tablesorter-filter-row select').val(presetStatus).trigger('chosen:updated');
+      $.tablesorter.setFilters($('#requests'), ['', '', '', '', presetStatus, '', '', '', ''], true);
+    }, 100);
+  }
+$('#requests').on('tablesorter-initialized', function () {
+  var params = new URLSearchParams(window.location.search);
+  var presetStatus = params.get('status') || '';
+  if (presetStatus) {
+    $('#requests .tablesorter-filter-row select').val(presetStatus);
+    $.tablesorter.setFilters($('#requests'), ['', '', '', '', presetStatus, '', '', '', ''], true);
+  }
+});
+
+</script>

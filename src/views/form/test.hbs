@@ -1,0 +1,144 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="mb-0">Nuovo Environment</h3>
+</div>
+
+<form action="/env" method="POST">
+  <div class="card border-secondary p-4 mb-4">
+    <h6 class="text-secondary mb-3">Configurazione Generale</h6>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Environment Name</label>
+        <input type="text" name="name" class="form-control" placeholder="es. production">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" placeholder="es. root">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Token Name</label>
+        <input type="text" name="token_name" class="form-control" placeholder="es. mytoken">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Token Secret</label>
+        <input type="password" name="token_secret" class="form-control" placeholder="••••••••">
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-secondary p-4 mb-4">
+    <h6 class="text-secondary mb-3">Storage & Rete</h6>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Template Folder</label>
+        <input type="text" name="template_folder" class="form-control" placeholder="es. NAS-LXC-Template">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Container Storage</label>
+        <input type="text" name="container_storage" class="form-control" placeholder="es. zfs1">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">VM Storage</label>
+        <input type="text" name="vm_storage" class="form-control" placeholder="es. zfs1">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Machine LAN / Prefix</label>
+          <input type="text" name="machine_lan" class="form-control" placeholder="es. 192.168.1.0">
+          <span class="fw-bold text-secondary fs-5">/</span>
+          <input type="text" name="lan_prefix" class="form-control" placeholder="24" style="max-width: 80px;">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Machine Gateway</label>
+        <input type="text" name="machine_gateway" class="form-control" placeholder="es. 192.168.1.1">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Linux Bridge</label>
+        <input type="text" name="linux_bridge" class="form-control" placeholder="es. vmbr0">
+      </div>
+  </div>
+
+  <div class="card border-secondary p-4 mb-4">
+    <h6 class="text-secondary mb-3">Accesso SSH</h6>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">SSH Username</label>
+        <input type="text" name="ssh_username" class="form-control" placeholder="es. root">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">SSH Password</label>
+        <input type="password" name="ssh_password" class="form-control" placeholder="••••••••">
+      </div>
+    </div>
+  </div>
+
+  <!-- Nodes -->
+  <div class="card border-secondary p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="text-secondary mb-0">Nodes</h6>
+      <button type="button" id="add-node-btn" class="btn btn-sm btn-outline-secondary">+ Aggiungi Node</button>
+    </div>
+    <div id="nodes-container" class="d-flex flex-column gap-3">
+      <p class="text-muted fst-italic mb-0" id="no-nodes-msg">Nessun node aggiunto.</p>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary px-4">Salva Environment</button>
+  </div>
+</form>
+
+<!-- Template node -->
+<template id="node-template">
+  <div class="node card bg-secondary bg-opacity-10 border-secondary p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="mb-0 text-secondary">Node __DISPLAY__</h6>
+      <button type="button" class="btn btn-sm btn-outline-danger remove-node-btn">✕ Rimuovi</button>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Node Name</label>
+        <input type="text" name="nodes__INDEX__[name]" class="form-control" placeholder="es. px1">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Node IP</label>
+        <input type="text" name="nodes__INDEX__[ip]" class="form-control" placeholder="es. 192.168.1.10">
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+let nodeCount = 0;
+
+const addNodeBtn = document.getElementById('add-node-btn');
+const container = document.getElementById('nodes-container');
+const template = document.getElementById('node-template');
+const noNodesMsg = document.getElementById('no-nodes-msg');
+
+addNodeBtn.addEventListener('click', () => {
+  noNodesMsg.style.display = 'none';
+
+  const clone = template.content.cloneNode(true);
+  const htmlString = clone.firstElementChild.outerHTML
+    .replace(/__INDEX__/g, `[${nodeCount}]`)
+    .replace(/__DISPLAY__/g, nodeCount + 1);
+
+  const div = document.createElement('div');
+  div.innerHTML = htmlString;
+
+  const nodeEl = div.firstElementChild;
+  nodeEl.querySelector('.remove-node-btn').addEventListener('click', () => {
+    nodeEl.remove();
+    if (container.querySelectorAll('.node').length === 0) {
+      noNodesMsg.style.display = '';
+    }
+  });
+
+  container.appendChild(nodeEl);
+  nodeCount++;
+});
+</script>

@@ -1,0 +1,63 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="mb-0">Create Template</h3>
+</div>
+
+{{> flash-message}}
+
+<form action="/template" method="POST" enctype="multipart/form-data">
+  <div class="card border-secondary p-4 mb-4">
+    <h6 class="text-secondary mb-3">Configure Template</h6>
+    <div class="row g-3">
+
+      <div class="col-md-6">
+        <label class="form-label">Name</label>
+        <input type="text" name="name" class="form-control" placeholder="es. ubuntu-dev">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Base Machine</label>
+        <select name="base_machine" class="form-select">
+          <option disabled selected>Select a base machine</option>
+
+          {{#if lxcMachines.length}}
+          <optgroup label="LXC Templates">
+            {{#each lxcMachines}}
+              <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </optgroup>
+          {{/if}}
+
+          {{#if vmMachines.length}}
+          <optgroup label="VM Templates">
+            {{#each vmMachines}}
+              <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </optgroup>
+          {{/if}}
+
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">RAM (MB)</label>
+        <input type="number" name="ram" class="form-control" placeholder="es. 512" min="128">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Numbers of cores</label>
+        <input type="number" name="cores" class="form-control" placeholder="es. 2" min="1">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Provisioning Script</label>
+        <input type="file" name="script" class="form-control" accept=".sh">
+        <div class="form-text">load a script <code>.sh</code> for provisioning (optional)</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary px-4">Create Template</button>
+  </div>
+</form>

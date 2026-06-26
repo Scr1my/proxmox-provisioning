@@ -1,0 +1,93 @@
+<tr>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#req-{{this.id}}">
+            <i class="bi bi-chevron-down"></i>
+          </button>
+        </td>
+        <td>#{{this.id}}</td>
+        {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+          <td>{{this.requester.username}}</td>
+        {{/if}}
+        <td>{{this.approver.username}}</td>
+        <td class="text-center">
+          {{#if (eq this.status "PENDING")}}<span class="badge bg-warning text-dark">PENDING</span>{{/if}}
+          {{#if (eq this.status "APPROVED")}}<span class="badge bg-success">APPROVED</span>{{/if}}
+          {{#if (eq this.status "COMPLETED")}}<span class="badge bg-success">COMPLETED</span>{{/if}}
+          {{#if (eq this.status "REJECTED")}}<span class="badge bg-danger">REJECTED</span>{{/if}}
+        </td>
+        <td class="text-center">{{this.request_machines.length}}</td>
+        <td>{{formatDate created_at}}</td>
+        <td>{{#if closed_at}}{{formatDate closed_at}}{{else}}-{{/if}}</td>
+        {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+        <td>
+          {{#if (eq this.status "PENDING")}}
+             <div class="d-flex gap-1 flex-nowrap">
+              <form action="/approveRequest/{{this.id}}" method="POST" class="d-inline">
+                <button class="btn btn-sm btn-success">Approve</button>
+              </form>
+              <form action="/rejectRequest/{{this.id}}" method="POST" class="d-inline">
+                <button class="btn btn-sm btn-danger">Reject</button>
+              </form>
+            </div>
+          {{/if}}
+        </td>
+        {{/if}}
+      </tr>
+
+      <tr class="collapse tablesorter-childRow" id="req-{{this.id}}">
+        
+        <td 
+          {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+            colspan="9" 
+          {{else}}
+            colspan="7" 
+          {{/if}}
+          class="bg-light">
+          <div class="p-3">
+            <p class="mb-2"><strong>Observation:</strong> {{this.observation}}</p>
+
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Hostname</th>
+                  <th>OS</th>
+                  <th>Cores</th>
+                  <th>RAM</th>
+                  <th class="text-center">Status</th>
+                  {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+                    <th class="text-center">Actions</th>
+                  {{/if}}
+                </tr>
+              </thead>
+              <tbody>
+                {{#each this.request_machines}}
+                <tr>
+                  <td>{{this.hostname}}</td>
+                  <td>{{this.machine_template.name}}</td>
+                  <td>{{this.machine_template.cores}}</td>
+                  <td>{{this.machine_template.ram}} MB</td>
+                  <td class="text-center">{{this.status}}</td>
+                  {{#if (hasGroup ../user (arr "global-admin" "generic-approver" "manager"))}}
+                  <td class="text-center">
+                    {{#if (eq this.status "PENDING")}}
+                    
+                      <form action="/approveMachine/{{this.id}}" method="POST" class="d-inline">
+                        <button class="btn btn-success btn-sm">Approve</button>
+                      </form>
+                      <form action="/rejectMachine/{{this.id}}" method="POST" class="d-inline">
+                        <button class="btn btn-danger btn-sm">Reject</button>
+                      </form>
+                    {{/if}}
+                    
+                  </td>
+                  {{/if}}
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>

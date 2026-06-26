@@ -1,0 +1,88 @@
+<h1 class="mb-4">Create Template Type</h1>
+
+{{> flash-message}}
+
+<form action="/template/type" method="POST" class="card p-4 shadow-sm" style="max-width: 500px;">
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Environment</label>
+    <select name="env" class="form-select" onchange="loadTemplate(event)">
+      <option value="">— Select the Environment —</option>
+      {{#each envs}}
+        <option value="{{this.id}}">{{this.name}}</option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="mb-3" id="osWrapper" style="display:none;">
+    <label class="form-label fw-semibold">Operating System / Image</label>
+    <select name="os" id="osSelect" class="form-select">
+      <option value="">— Select an OS —</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Template Name</label>
+    <input type="text" name="name" class="form-control" placeholder="Enter a name...">
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">
+    <i class="bi bi-plus-circle me-2"></i>Create Template
+  </button>
+</form>
+
+<script>
+    window.loadTemplate = async (event) => {
+        const envId = event.target.value;
+        const osSelect = document.getElementById('osSelect');
+        const osWrapper = document.getElementById('osWrapper');
+        
+        osWrapper.style.display = 'none';
+        osSelect.innerHTML = '<option value="">— Select an OS —</option>';
+
+        if (!envId) return;
+        try {
+            const res = await fetch(`/template/${envId}/OS`);
+            const data = await res.json();
+            const lxcOS = data.LXCOSTemplates ?? [];
+            const vmISO = data.VMISOImages ?? [];
+
+            // LXC Group
+            if (lxcOS.length > 0) {
+                const lxcGroup = document.createElement('optgroup');
+                lxcGroup.label = 'LXC Templates';
+                lxcOS.forEach(template => {
+                    const opt = document.createElement('option');
+                    opt.value = template.volid;
+                    opt.textContent = template.volid.split('/').pop().replace(/(_amd64|_arm64).*/, '');
+                    lxcGroup.appendChild(opt);
+                });
+                osSelect.appendChild(lxcGroup);
+            }
+
+            // VM ISO Group
+            if (vmISO.length > 0) {
+                const vmGroup = document.createElement('optgroup');
+                vmGroup.label = 'VM ISO Images';
+                vmISO.forEach(iso => {
+                    const opt = document.createElement('option');
+                    opt.value = iso.volid;
+                    opt.textContent = iso.volid.split('/').pop().replace(/\.iso$/i, '');
+                    vmGroup.appendChild(opt);
+                });
+                osSelect.appendChild(vmGroup);
+            }
+
+            if (lxcOS.length === 0 && vmISO.length === 0) {
+                const noOpt = document.createElement('option');
+                noOpt.disabled = true;
+                noOpt.textContent = 'No images available for this environment';
+                osSelect.appendChild(noOpt);
+            }
+
+            osWrapper.style.display = 'block';
+        } catch (err) {
+            console.error('Error loading OS list:', err);
+        }
+    }
+
+</script>

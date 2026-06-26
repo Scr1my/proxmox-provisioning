@@ -1,0 +1,47 @@
+services:
+  proxmox-provisioning:
+    build:
+      context: .
+    image: hub.labosamt.ch/simone.demarchi/proxmox-provisioning:latest
+    container_name: proxmox-provisioning
+    ports:
+      - ${PORT}:${PORT}
+    env_file: .env
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+    command: sh -c "npx prisma migrate deploy && node dist/src/main.js"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - appnet
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - appnet   
+
+volumes:
+  db_data:
+
+networks:
+  appnet:
+    driver: bridge

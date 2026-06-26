@@ -1,0 +1,297 @@
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center gy-4">
+      <div class="col-lg-7">
+        <span class="badge bg-white fw-semibold mb-3" style="color:#6d28d9;">How-to guide — Administrators</span>
+        <h1 class="display-6 fw-bold mb-3">Manage environments, nodes, and template types</h1>
+        <p class="lead mb-0" style="opacity:.8;">
+          As an admin you can create and configure Proxmox environments, add Proxmox nodes to them, review and edit existing environments, and register new base template types for managers to build on.
+        </p>
+      </div>
+      <div class="col-lg-5">
+        <div class="card border-0 rounded-4 shadow-sm p-4">
+          <h6 class="fw-bold text-dark mb-3">What you will learn</h6>
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex gap-2 align-items-start">
+              <span class="dot-purple"></span>
+              <span class="text-muted small"><strong class="text-dark">Part 1 — Environments:</strong> create a new environment, add nodes, view the list, open details, and edit.</span>
+            </div>
+            <div class="d-flex gap-2 align-items-start">
+              <span class="dot-teal"></span>
+              <span class="text-muted small"><strong class="text-dark">Part 2 — Template Types:</strong> register a new base OS template type linked to an environment.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="container py-5" id="main-content">
+
+  <!-- ══════════════════════════════════════
+       PART 1 – ENVIRONMENTS
+  ══════════════════════════════════════ -->
+  <div class="part-label purple"><i class="bi bi-server"></i> Part 1 – Environment management</div>
+
+  <!-- STEP 1 – Create environment -->
+  <div class="card step-card mb-2">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number purple">1</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Create a new environment</h2>
+          <p class="text-muted mb-0 mt-1">Go to the <strong>Environment</strong> section and click <strong>+ Add Environment</strong> to open the creation form.</p>
+        </div>
+      </div>
+
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-6">
+          <p class="text-muted mb-3">An environment represents a Proxmox cluster connection. Fill in three sections: <strong>General config</strong>, <strong>Storage &amp; Network</strong>, and <strong>SSH Access</strong>.</p>
+
+          <p class="fw-semibold mb-2">General config</p>
+          <ol class="d-flex flex-column gap-1 mb-4 small">
+            <li>Enter the <strong>Environment Name</strong> (e.g. <code>production</code>).</li>
+            <li>Enter the Proxmox <strong>Username</strong> (e.g. <code>root@pam</code>).</li>
+            <li>Enter the Proxmox user <strong>Password</strong>.</li>
+            <li>Enter the API <strong>Token Name</strong> (e.g. <code>mytoken</code>).</li>
+            <li>Enter the API <strong>Token Secret</strong>.</li>
+          </ol>
+
+          <p class="fw-semibold mb-2">Storage &amp; Network</p>
+          <ol class="d-flex flex-column gap-1 mb-4 small">
+            <li>Set the <strong>Template Folder ID</strong> (storage where CT templates are stored, e.g. <code>NAS-LXC-Template</code>).</li>
+            <li>Set <strong>Container Storage</strong> and <strong>VM Storage</strong> (e.g. <code>zfs1</code>).</li>
+            <li>Enter the <strong>Machine LAN / Prefix</strong> (e.g. <code>192.168.1.0 / 24</code>).</li>
+            <li>Enter the <strong>Machine Gateway</strong> and <strong>Machine Linux Bridge</strong> (e.g. <code>vmbr0</code>).</li>
+          </ol>
+
+          <p class="fw-semibold mb-2">SSH Access</p>
+          <ol class="d-flex flex-column gap-1 mb-3 small">
+            <li>Enter the <strong>SSH Username</strong> and <strong>SSH Password</strong> used to connect to nodes.</li>
+          </ol>
+
+          <div class="tip-purple">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            All fields in General config and Storage &amp; Network are required. SSH Access is used for node-level operations.
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <figure class="screenshot m-0">
+            <img src="/img/env_form.png" class="img-fluid" alt="New Environment form with General config, Storage and Network, and SSH Access sections" loading="lazy">
+            <figcaption><i class="bi bi-image me-1"></i>New Environment creation form</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector my-1"></div>
+
+  <!-- STEP 2 – Add nodes -->
+  <div class="card step-card mb-2">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number purple">2</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Add Proxmox nodes to the environment</h2>
+          <p class="text-muted mb-0 mt-1">While still on the creation form, scroll to the <strong>Nodes</strong> section and add all cluster nodes.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-6">
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>Click <strong>+ Add Node</strong> to add a node slot.</li>
+            <li>Enter the <strong>Node Name</strong> (e.g. <code>px1</code>).</li>
+            <li>Enter the <strong>Node IP</strong> address (e.g. <code>192.168.1.10</code>).</li>
+            <li>Repeat for every node in the cluster.</li>
+            <li>To remove a node before saving, click <strong>× Rimuovi</strong> on that node's card.</li>
+            <li>Once all nodes and form fields are complete, submit the form to create the environment.</li>
+          </ol>
+          <div class="tip-indigo">
+            <i class="bi bi-lightbulb-fill me-2"></i>
+            You can add as many nodes as needed. Each node needs a unique name and its own IP address within the environment's LAN.
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <figure class="screenshot m-0">
+            <img src="/img/nodes_form.png" class="img-fluid" alt="Nodes section of the environment form showing two node cards with Node Name and Node IP fields" loading="lazy">
+            <figcaption><i class="bi bi-image me-1"></i>Nodes section — add one card per node</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector my-1"></div>
+
+  <!-- STEP 3 – View list -->
+  <div class="card step-card mb-2">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number purple">3</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">View environments in the list</h2>
+          <p class="text-muted mb-0 mt-1">After saving, the new environment appears in the <strong>Environment</strong> list with its key details.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-6">
+          <p class="text-muted mb-3">The environment list shows a summary row for each configured environment.</p>
+          <div class="table-responsive mb-4">
+            <table class="table table-sm table-bordered small">
+              <thead class="table-dark"><tr><th>Column</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><strong>ID</strong></td><td>Auto-assigned numeric identifier</td></tr>
+                <tr><td><strong>Nome</strong></td><td>Environment name</td></tr>
+                <tr><td><strong>Username</strong></td><td>Proxmox login username</td></tr>
+                <tr><td><strong>Token Name</strong></td><td>API token identifier</td></tr>
+                <tr><td><strong>Machine LAN</strong></td><td>Network address of the environment</td></tr>
+                <tr><td><strong>Details</strong></td><td><i class="bi bi-search"></i> opens the detail view</td></tr>
+                <tr><td><strong>Delete</strong></td><td><i class="bi bi-trash text-danger"></i> removes the environment</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tip-warn">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Deleting an environment is permanent. Make sure no active machines are linked to it before deleting.
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <figure class="screenshot m-0">
+            <img src="/img/env_list.png" class="img-fluid" alt="Environment list showing two environments: proxmox_test and proxmox_prod with details and delete actions" loading="lazy">
+            <figcaption><i class="bi bi-image me-1"></i>Environment list</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector my-1"></div>
+
+  <!-- STEP 4 – Edit -->
+  <div class="card step-card mb-5">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number purple">4</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">View details and edit an environment</h2>
+          <p class="text-muted mb-0 mt-1">Click the <i class="bi bi-search"></i> <strong>Details</strong> icon to open the environment detail page where you can inspect and modify all settings.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-6">
+          <p class="text-muted mb-3">The detail page shows a read-only view of the environment configuration. To make changes:</p>
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>Click the <i class="bi bi-search"></i> icon in the <strong>Details</strong> column of the environment list.</li>
+            <li>Review the current configuration in the <strong>Configurazione Environment</strong> panel and the <strong>Node List</strong> below.</li>
+            <li><strong>Double-click</strong> on any field to enable editing for that field.</li>
+            <li>Modify the value as needed.</li>
+            <li>Click <strong>Salva modifiche</strong> (Save changes) at the top right to save all edits.</li>
+          </ol>
+          <p class="fw-semibold mb-2">Managing nodes from the detail page</p>
+          <ul class="d-flex flex-column gap-2 mb-4 small text-muted">
+            <li>Click <strong>+ Aggiungi Nodo</strong> to add a new node to the environment.</li>
+            <li>Edit an existing node's name or IP directly in the Node List table, then click <strong>Salva</strong> on that row.</li>
+            <li>Click <strong>Elimina</strong> to remove a specific node.</li>
+          </ul>
+          <div class="tip-purple">
+            <i class="bi bi-hand-index-thumb-fill me-2"></i>
+            Fields are read-only by default. You must <strong>double-click</strong> a field to enter edit mode before you can change its value.
+          </div>
+        </div>
+        <div class="col-lg-6 d-flex flex-column gap-3">
+          <figure class="screenshot m-0">
+            <img src="/img/env_mod.png" class="img-fluid" alt="Environment detail page showing configuration fields, node list with save and delete actions, and Save Changes button" loading="lazy">
+            <figcaption><i class="bi bi-image me-1"></i>Environment detail and edit page</figcaption>
+          </figure>
+          <div class="card border rounded-3 p-3 bg-light small">
+            <p class="fw-semibold mb-2 text-muted text-uppercase" style="letter-spacing:.06em;font-size:.7rem;">Quick reference — field editing</p>
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex gap-2 align-items-center">
+                <kbd>Double-click</kbd><span class="text-muted">on any field to enable editing</span>
+              </div>
+              <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-primary btn-sm py-0 px-2" disabled><i class="bi bi-floppy me-1"></i>Salva modifiche</button>
+                <span class="text-muted">saves all changes at once</span>
+              </div>
+              <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-outline-primary btn-sm py-0 px-2" disabled><i class="bi bi-floppy me-1"></i>Salva</button>
+                <span class="text-muted">saves a single node row</span>
+              </div>
+              <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-outline-danger btn-sm py-0 px-2" disabled><i class="bi bi-trash me-1"></i>Elimina</button>
+                <span class="text-muted">removes a single node</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ══════════════════════════════════════
+       PART 2 – TEMPLATE TYPES
+  ══════════════════════════════════════ -->
+  <div class="part-label teal"><i class="bi bi-box-seam"></i> Part 2 – Template type management</div>
+
+  <!-- STEP 5 – Create template type -->
+  <div class="card step-card mb-5">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number teal">5</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Create a new template type</h2>
+          <p class="text-muted mb-0 mt-1">Register a base OS image as a template type. Managers will later use it to build full templates with RAM, cores, and scripts.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-6">
+          <p class="text-muted mb-3">A template type is the base OS layer (e.g. <code>rockylinux-9-default</code>) stored in Proxmox. Once registered here, managers can select it as the foundation when creating a new template.</p>
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>Navigate to the <strong>Template Types</strong> section from the main menu.</li>
+            <li>Click <strong>Create Template Type</strong> (or the equivalent button) to open the form.</li>
+            <li>Select the target <strong>Environment</strong> from the drop-down (e.g. <code>proxmox_test</code>).</li>
+            <li>Select the <strong>Operating System / Image</strong> available on that Proxmox environment (e.g. <code>rockylinux-9-default_20240912</code>).</li>
+            <li>Enter a human-readable <strong>Template Name</strong> that managers will see when creating templates.</li>
+            <li>Click <strong>⊕ Create Template</strong> to save the new template type.</li>
+          </ol>
+          <div class="tip-teal">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            The OS images available in the drop-down are pulled directly from the selected Proxmox environment. Make sure the environment is reachable and the template folder is correctly configured.
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <figure class="screenshot m-0">
+            <img src="/img/template_type_form.png" class="img-fluid" alt="Create Template Type form with Environment dropdown, OS Image dropdown, Template Name field and Create button" loading="lazy">
+            <figcaption><i class="bi bi-image me-1"></i>Create Template Type form</figcaption>
+          </figure>
+          <div class="card border rounded-3 p-3 bg-light mt-3 small">
+            <p class="fw-semibold mb-2 text-muted text-uppercase" style="letter-spacing:.06em;font-size:.7rem;">Field reference</p>
+            <table class="table table-sm table-borderless mb-0">
+              <thead><tr><th>Field</th><th>Required</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Environment</strong></td><td><span class="badge bg-danger">Yes</span></td></tr>
+                <tr><td><strong>Operating System / Image</strong></td><td><span class="badge bg-danger">Yes</span></td></tr>
+                <tr><td><strong>Template Name</strong></td><td><span class="badge bg-danger">Yes</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER NOTE -->
+  <div class="alert alert-light border rounded-4 p-4">
+    <h6 class="fw-bold mb-2"><i class="bi bi-pin-angle-fill me-2" style="color:#6d28d9;"></i>Remember</h6>
+    <ul class="mb-0 text-muted ps-3 d-flex flex-column gap-1 small">
+      <li>Always set Storage &amp; Network and SSH Access correctly — they are used at machine provisioning time.</li>
+      <li>Fields in the detail view are <strong>read-only by default</strong>: double-click to edit, then save.</li>
+      <li>Template types must reference a valid environment. Create the environment first, then register its template types.</li>
+      <li>Managers depend on template types to build templates. Keep the OS image names descriptive and up to date.</li>
+    </ul>
+  </div>

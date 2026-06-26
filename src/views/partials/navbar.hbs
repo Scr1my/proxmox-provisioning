@@ -1,0 +1,88 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="mainNavbar">
+    <a class="navbar-brand" href="/">Proxmox-Provisioning</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+    {{#if user}}
+        <ul class="navbar-nav me-auto"> 
+
+            <!--Request-->
+            {{#if (hasGroup user (arr "requester" "global-admin" "generic-approver" "manager"))}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    Request
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/list/requests">List</a></li>
+                        <li><a class="dropdown-item" href="/form/request">Form</a></li>
+                    </ul>
+                </li>
+
+            <!--Machine-->
+            <li>
+                <a class="nav-link" href="/list/machines">
+                    Machines
+                </a>
+            </li>
+            {{/if}}
+
+            {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+            <!--Template-->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                Templates
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/list/templates">List</a></li>
+                    {{#if (hasGroup user (arr "global-admin"))}}
+                    <li><a class="dropdown-item" href="/form/templateType">Template Type form</a></li>
+                    {{/if}}
+                    <li><a class="dropdown-item" href="/form/template">Template form</a></li>
+                </ul>
+            </li>
+            {{/if}}
+
+            {{#if (hasGroup user (arr "global-admin"))}}
+            <!--Environment-->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    Environments
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/list/environments">List</a></li>
+                    <li><a class="dropdown-item" href="/form/environment">Form</a></li>
+                </ul>
+            </li>
+            {{/if}}
+
+            
+            <!--Guide-->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    Guide
+                </a>
+                <ul class="dropdown-menu">
+                    {{#if (hasGroup user (arr "requester" "global-admin" "generic-approver" "manager"))}}
+                        <li><a class="dropdown-item" href="/guide/user">Request</a></li>
+                    {{/if}}
+                    {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+                        <li><a class="dropdown-item" href="/guide/manager">Manager</a></li>
+                    {{/if}}
+                    {{#if (hasGroup user (arr "global-admin"))}}
+                    <li><a class="dropdown-item" href="/guide/admin">Admin</a></li>
+                    {{/if}}
+                </ul>
+            </li>
+            
+        </ul>
+
+    
+        <form action="/auth/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                Logout
+            </button>
+        </form>
+    {{/if}}
+  </div>
+</nav>

@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "mysql"
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  INPROGRESS
+}
+
+enum MachineType {
+  LXC
+  VM
+}
+
+enum OSFamily {
+  LINUX
+  WINDOWS
+}
+
+enum AuthType {
+  LOCAL
+  LDAP
+}
+
+model User {
+  id            Int     @id @default(autoincrement())
+  username      String  @unique
+  name          String?
+  surname       String?
+  password      String?
+  authType      AuthType @default(LOCAL)
+  ldapDn        String?
+  
+  groups            Group[]
+  requesterRequests Request[] @relation("RequestedRequests")
+  approverRequests  Request[] @relation("ApprovingRequests")
+}
+
+model Group {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  users       User[]
+  permission  Group_permission?
+}
+
+model Group_permission {
+  id                     Int      @id @default(autoincrement())
+  group_id               Int      @unique
+  can_request            Boolean  @default(false)
+  can_approve_specific   Boolean  @default(false)
+  can_approve_generic    Boolean  @default(false)
+  can_manage_environment Boolean  @default(false)
+  can_manage_template    Boolean  @default(false)
+  can_manage_OS          Boolean  @default(false)
+
+  group Group @relation(fields: [group_id], references: [id])
+}
+
+model Request {
+  id                Int  @id @default(autoincrement())
+  requester_id      Int
+  approver_id       Int
+  observation       String
+  status            RequestStatus    @default(PENDING)
+  created_at        DateTime      @default(now())
+  closed_at         DateTime?
+
+  request_machines  RequestMachine[]
+  requester         User @relation("RequestedRequests", fields: [requester_id], references: [id])
+  approver          User @relation("ApprovingRequests", fields: [approver_id], references: [id])
+}
+
+model RequestMachine {
+  id                  Int @id @default(autoincrement())
+  request_id          Int
+  machine_template_id Int
+  hostname            String @unique
+  status              RequestStatus    @default(PENDING)
+  environment_node_id Int
+
+  request             Request           @relation(fields: [request_id], references: [id])
+  machine_template    Machine_template  @relation(fields: [machine_template_id], references: [id])
+  environment_node    Environment_node  @relation(fields: [environment_node_id], references: [id])
+  machine             Machine?
+}
+
+model Machine {
+  id                  Int  @id @default(autoincrement())
+  vmid                Int   @unique
+  ip                  String
+  request_Machine_id  Int @unique
+  machine_type        MachineType
+
+  credential          Credential?
+  requestMachine      RequestMachine @relation(fields: [request_Machine_id], references: [id])
+}
+
+model Credential {
+  id          Int   @id @default(autoincrement())
+  machine_id  Int   @unique
+  username    String
+  password    String
+
+  machine Machine @relation(fields: [machine_id], references: [id])
+}
+
+model Machine_template {
+  id                Int     @id @default(autoincrement())
+  name              String  @unique
+  cores             Int
+  ram               Int
+  machine_type_id   Int
+  provisiong_script String?
+
+  request_machines  RequestMachine[]
+  machine_type      Machine_type @relation(fields: [machine_type_id], references: [id])
+}
+
+model Machine_type {
+  id                      Int     @id @default(autoincrement())
+  name                    String  @unique
+  vmid                    Int     
+  os                      String
+  os_family               OSFamily
+  environment_node_id     Int
+  type                    MachineType
+
+  machine_template        Machine_template[]
+  environment_node        Environment_node @relation(fields: [environment_node_id], references: [id])
+}
+
+model Environment {
+  id                  Int     @id     @default(autoincrement())
+  name                String  @unique
+  username            String
+  password            String
+  token_name          String
+  token_secret        String
+  template_folder_id  String
+  container_storage   String
+  vm_storage          String
+  machine_lan         String
+  lan_prefix          String
+  machine_gateway     String
+  linux_bridge        String
+  ssh_username        String
+  ssh_password        String
+
+  environment_nodes   Environment_node[]
+}
+
+model Environment_node {
+  id                Int     @id     @default(autoincrement())
+  name              String  @unique
+  ip                String  @unique
+  environment_id    Int
+
+  environment       Environment @relation(fields: [environment_id], references: [id])
+  machine_types     Machine_type[]
+  request_machines  RequestMachine[]
+}

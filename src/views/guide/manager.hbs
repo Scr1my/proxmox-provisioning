@@ -1,0 +1,247 @@
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center gy-4">
+      <div class="col-lg-7">
+        <span class="badge bg-white text-success fw-semibold mb-3">How-to guide — Managers</span>
+        <h1 class="display-6 fw-bold mb-3">Manage templates and approve or reject machine requests</h1>
+        <p class="lead opacity-75 mb-0">
+          As a manager you can create custom templates from base machines and review incoming requests — approving or rejecting them at request level or for individual machines.
+        </p>
+      </div>
+      <div class="col-lg-5">
+        <div class="card border-0 rounded-4 shadow-sm p-4">
+          <h6 class="fw-bold text-dark mb-3">What you will learn</h6>
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex gap-2 align-items-start">
+              <span class="overview-dot-green mt-1"></span>
+              <span class="text-muted small"><strong class="text-dark">Part 1 — Create a template</strong> from a base machine OS with custom RAM, cores, and a provisioning script.</span>
+            </div>
+            <div class="d-flex gap-2 align-items-start">
+              <span class="overview-dot-green mt-1"></span>
+              <span class="text-muted small"><strong class="text-dark">Part 2 — Review requests</strong> and approve or reject them at the whole-request level or machine by machine.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="container py-5" id="main-content">
+
+  <!-- ── PART 1: TEMPLATES ── -->
+  <div class="part-label green"><i class="bi bi-grid-fill"></i> Part 1 – Template management</div>
+
+  <!-- STEP 1 -->
+  <div class="card step-card mb-2">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number green">1</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Open the Create Template page</h2>
+          <p class="text-muted mb-0 mt-1">Navigate to the <strong>Templates</strong> section and click <strong>Create Template</strong>.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-7">
+          <p class="text-muted mb-3">Templates are pre-configured machine profiles built on top of a base machine that contains only the OS. Once saved, templates are available to users when they submit a new machine request.</p>
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>Go to the <strong>Templates</strong> section from the main menu.</li>
+            <li>Click <strong>Create Template</strong> to open the configuration form.</li>
+          </ol>
+          <div class="tip-box-green">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            Base machines contain only a clean OS installation (e.g. Rocky Linux, Ubuntu). Templates add RAM, CPU cores, and an optional provisioning script on top of them.
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <figure class="screenshot m-0">
+            <img src="/img/template.png" class="img-fluid" alt="Create Template form showing name, base machine, RAM, cores, and provisioning script fields" loading="lazy">
+            <figcaption><i class="bi bi-image me-1"></i>Create Template form</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector my-1"></div>
+
+  <!-- STEP 2 -->
+  <div class="card step-card mb-5">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number green">2</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Fill in and save the template</h2>
+          <p class="text-muted mb-0 mt-1">Configure all template fields and click <strong>Create Template</strong> to save.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-7">
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>Enter a unique <strong>Name</strong> for the template (e.g. <code>ubuntu-dev</code>).</li>
+            <li>Select the <strong>Base Machine</strong> to use as the starting OS image.</li>
+            <li>Set the amount of <strong>RAM (MB)</strong> to allocate.</li>
+            <li>Set the <strong>Number of cores</strong> for the machine.</li>
+            <li>Optionally upload a <strong>Provisioning Script</strong> (<code>.sh</code> file) to run on first boot.</li>
+            <li>Click <strong>Create Template</strong> to save and publish the template.</li>
+          </ol>
+          <div class="tip-box-blue">
+            <i class="bi bi-lightbulb-fill me-2"></i>
+            The provisioning script is optional. Use it to automate software installation or configuration on every machine that uses this template.
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card border rounded-3 p-3 bg-light">
+            <p class="fw-semibold mb-2 small text-muted text-uppercase" style="letter-spacing:.06em;">Field reference</p>
+            <table class="table table-sm table-borderless mb-0 small">
+              <thead><tr><th>Field</th><th>Required</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Name</strong></td><td><span class="badge bg-danger">Yes</span></td></tr>
+                <tr><td><strong>Base Machine</strong></td><td><span class="badge bg-danger">Yes</span></td></tr>
+                <tr><td><strong>RAM (MB)</strong></td><td><span class="badge bg-danger">Yes</span></td></tr>
+                <tr><td><strong>Number of cores</strong></td><td><span class="badge bg-danger">Yes</span></td></tr>
+                <tr><td><strong>Provisioning Script</strong></td><td><span class="badge bg-secondary">Optional</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── PART 2: APPROVALS ── -->
+  <div class="part-label blue"><i class="bi bi-check2-square"></i> Part 2 – Request approvals</div>
+
+  <!-- STEP 3 -->
+  <div class="card step-card mb-2">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number blue">3</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Open a pending request</h2>
+          <p class="text-muted mb-0 mt-1">Go to the <strong>Request</strong> page to see all pending requests assigned to you.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-7">
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>Navigate to the <strong>Request</strong> page from the main menu.</li>
+            <li>Locate requests with status <span class="badge rounded-pill px-2 py-1" style="background:#fff3cd;color:#7d5a00;border:1px solid #ffe69c;">Pending</span> assigned to you as approver.</li>
+            <li>Click the <strong>expand arrow <i class="bi bi-chevron-down"></i></strong> on the left of a request to reveal the machine details inside it.</li>
+            <li>Review the <strong>Hostname</strong>, <strong>OS</strong>, <strong>Cores</strong>, <strong>RAM</strong>, and machine <strong>Status</strong>.</li>
+          </ol>
+          <div class="tip-box-blue">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            Each request may contain one or more machines. You can act on the whole request at once or handle each machine individually.
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <figure class="screenshot m-0">
+            <img src="/img/approve.png" class="img-fluid" alt="Request list showing a pending request expanded with machine details and Approve/Reject buttons" loading="lazy">
+            <figcaption><i class="bi bi-image me-1"></i>Pending request expanded with machine details</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector my-1"></div>
+
+  <!-- STEP 4 -->
+  <div class="card step-card mb-2">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number blue">4</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Approve or reject the whole request</h2>
+          <p class="text-muted mb-0 mt-1">Use the action buttons on the request row to act on all machines at once.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-7">
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>In the <strong>Actions</strong> column of the request row, click <button class="btn btn-success btn-sm py-0 px-2" disabled><i class="bi bi-check-lg me-1"></i>Approve</button> to approve all machines in the request.</li>
+            <li>Or click <button class="btn btn-danger btn-sm py-0 px-2" disabled><i class="bi bi-x-lg me-1"></i>Reject</button> to reject the entire request.</li>
+            <li>The status of the request and all its machines will update immediately.</li>
+          </ol>
+          <div class="tip-box-green">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            Approving the whole request at once is the fastest option when all machines inside are valid.
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card border rounded-3 p-3 bg-light">
+            <p class="fw-semibold mb-3 small text-muted text-uppercase" style="letter-spacing:.06em;">Request-level actions</p>
+            <div class="d-flex flex-column gap-3">
+              <div class="d-flex align-items-start gap-3">
+                <button class="btn btn-success btn-sm px-3" disabled><i class="bi bi-check-lg me-1"></i>Approve</button>
+                <span class="text-muted small">All machines in the request are approved at once and the request is closed.</span>
+              </div>
+              <div class="d-flex align-items-start gap-3">
+                <button class="btn btn-danger btn-sm px-3" disabled><i class="bi bi-x-lg me-1"></i>Reject</button>
+                <span class="text-muted small">The entire request is rejected. No machines will be provisioned.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector my-1"></div>
+
+  <!-- STEP 5 -->
+  <div class="card step-card mb-5">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-number blue">5</div>
+        <div>
+          <h2 class="h4 fw-bold mb-0">Approve or reject individual machines</h2>
+          <p class="text-muted mb-0 mt-1">Expand the request to act on each machine separately when you need partial approval.</p>
+        </div>
+      </div>
+      <div class="row gy-4 align-items-start">
+        <div class="col-lg-7">
+          <ol class="d-flex flex-column gap-2 mb-4">
+            <li>Click the <strong>expand arrow <i class="bi bi-chevron-down"></i></strong> to open the machine list inside the request.</li>
+            <li>Review each machine row: <strong>Hostname</strong>, <strong>OS</strong>, <strong>Cores</strong>, <strong>RAM</strong>.</li>
+            <li>For each machine, click <button class="btn btn-success btn-sm py-0 px-2" disabled>Approve</button> or <button class="btn btn-danger btn-sm py-0 px-2 ms-1" disabled>Reject</button> in the machine's own <strong>Actions</strong> column.</li>
+            <li>Repeat for every machine that needs a different decision.</li>
+          </ol>
+          <div class="tip-box-red">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            If you reject one machine but approve others, only the approved machines will be provisioned. The rejected machine will not be created.
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card border rounded-3 p-3 bg-light">
+            <p class="fw-semibold mb-3 small text-muted text-uppercase" style="letter-spacing:.06em;">Machine-level actions</p>
+            <div class="d-flex flex-column gap-3">
+              <div class="d-flex align-items-start gap-3">
+                <button class="btn btn-success btn-sm px-3" disabled>Approve</button>
+                <span class="text-muted small">Only this specific machine is approved and will be provisioned.</span>
+              </div>
+              <div class="d-flex align-items-start gap-3">
+                <button class="btn btn-danger btn-sm px-3" disabled>Reject</button>
+                <span class="text-muted small">Only this machine is rejected. Other machines in the request are unaffected.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER NOTE -->
+  <div class="alert alert-light border rounded-4 p-4">
+    <h6 class="fw-bold mb-2"><i class="bi bi-pin-angle-fill me-2 text-success"></i>Remember</h6>
+    <ul class="mb-0 text-muted ps-3 d-flex flex-column gap-1">
+      <li>Templates must be based on an existing base machine (OS only).</li>
+      <li>You can approve or reject at <strong>request level</strong> (all machines) or at <strong>machine level</strong> (individually).</li>
+      <li>Rejected machines will never be provisioned; approved machines will be available in the user's <strong>Machines</strong> page.</li>
+    </ul>
+  </div>

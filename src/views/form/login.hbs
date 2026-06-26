@@ -1,0 +1,63 @@
+<div class="card login-card">
+  <div class="card-header">
+    <h5>Login</h5>
+  </div>
+
+  <div class="card-body p-4">
+    <!-- Alert errore -->
+    <div id="alertError" class="alert alert-danger d-none" role="alert">
+      <i class="bi bi-x-circle me-2"></i>
+      <span id="alertMessage">Credential not valid.</span>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <!-- Username -->
+      <div class="mb-3">
+        <label for="username" class="form-label fw-medium">Username</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="bi bi-person"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            placeholder="mario.rossi"
+            autocomplete="username"
+            required
+          >
+        </div>
+        <div class="invalid-feedback">Inserisci il tuo username.</div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <label for="password" class="form-label fw-medium">Password</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="bi bi-lock"></i>
+          </span>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          >
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword" tabindex="-1">
+            <i class="bi bi-eye" id="eye"></i>
+          </button>
+        </div>
+        <div class="invalid-feedback">Inserisci la tua password.</div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-medium" id="submitBtn">
+        Accedi
+      </button>
+    </form>
+  </div>
+</div>
+
+<script src="/scripts/login.js"></script>

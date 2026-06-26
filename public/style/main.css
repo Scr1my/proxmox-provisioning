@@ -1,0 +1,13 @@
+body.light-mode {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+body.light-mode #mainNavbar {
+    background-color: #f8f9fa !important;
+}
+
+body.light-mode .navbar-brand,
+body.light-mode .nav-link {
+    color: #000000 !important;
+}

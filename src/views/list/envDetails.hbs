@@ -1,0 +1,142 @@
+<div class="d-flex justify-content-end mt-3">
+    {{> flash-message}}
+<button class="btn btn-primary px-4" onclick="saveEnvironment()">
+    <i class="bi bi-floppy me-1"></i>Salva modifiche
+</button>
+</div>
+
+<div class="card border-secondary mb-4">
+<div class="card-header text-secondary fw-semibold">Configurazione Environment</div>
+<div class="card-body">
+    <form id="envForm" data-env-id="{{env.id}}">
+    <div class="row g-3">
+
+        <div class="col-md-6">
+        <label class="form-label">Nome</label>
+        <input type="text" class="form-control" name="name" value="{{title}}">
+        </div>
+
+        <div class="col-md-6">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" value="{{env.username}}">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Password</label>
+            <div class="input-group">
+                <input type="password" id="passwordField" class="form-control" name="password" value="{{env.password}}">
+                <button class="btn btn-outline-secondary" type="button" onclick="toggleVisibility('passwordField', 'passwordIcon')">
+                    <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+        <label class="form-label">Token Name</label>
+        <input type="text" class="form-control" name="token_name" value="{{env.token_name}}">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Token Secret</label>
+            <div class="input-group">
+                <input type="password" id="tokenSecret" class="form-control" name="token_secret" value="{{env.token_secret}}">
+                <button class="btn btn-outline-secondary" type="button" onclick="toggleVisibility('tokenSecret', 'toggleIcon')">
+                    <i class="bi bi-eye" id="toggleIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+        <label class="form-label">Template Folder</label>
+        <input type="text" class="form-control" name="template_folder" value="{{env.template_folder_id}}">
+        </div>
+
+        <div class="col-md-6">
+        <label class="form-label">Container Storage</label>
+        <input type="text" class="form-control" name="container_storage" value="{{env.container_storage}}">
+        </div>
+
+        <div class="col-md-6">
+        <label class="form-label">VM Storage</label>
+        <input type="text" class="form-control" name="vm_storage" value="{{env.vm_storage}}">
+        </div>
+
+        <div class="col-md-6">
+        <label class="form-label">Machine LAN</label>
+        <input type="text" class="form-control" name="machine_lan" value="{{env.machine_lan}}">
+        </div>
+
+    </div>
+    </form>
+</div>
+</div>
+
+<div class="card border-secondary">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="text-secondary fw-semibold">Node List</span>
+        <button class="btn btn-sm btn-outline-success" onclick="addNode()">
+            <i class="bi bi-plus-circle me-1"></i>Aggiungi Nodo
+        </button>
+    </div>
+
+<div class="card-body p-0">
+    <table class="table table-hover mb-0 editable">
+    <thead class="table-light">
+        <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>IP</th>
+        <th class="text-end">Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each env.environment_nodes}}
+        <tr>
+            <td>{{this.id}}</td>
+            <td>{{this.name}}</td>
+            <td>{{this.ip}}</td>
+            <td class="text-end">
+            <button class="btn btn-sm btn-outline-primary" onclick="saveNode(this, {{this.id}})">
+                <i class="bi bi-floppy me-1"></i>Salva
+            </button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteNode({{this.id}})">
+                <i class="bi bi-trash me-1"></i>Elimina
+            </button>
+            </td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="4" class="text-center text-muted py-3">Nessun nodo trovato</td>
+        </tr>
+        {{/each}}
+    </tbody>
+    </table>
+</div>
+</div>
+
+<template id="nodeRowTemplate">
+  <tr data-node-id="new">
+    <td class="text-muted fst-italic">nuovo</td>
+    <td contenteditable="true" class="edit">Nome nodo</td>
+    <td contenteditable="true" class="edit">0.0.0.0</td>
+    <td class="text-end">
+      <button class="btn btn-sm btn-outline-primary" onclick="saveNode(this, 'new')">
+        <i class="bi bi-floppy me-1"></i>Salva
+      </button>
+      <button class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">
+        <i class="bi bi-trash me-1"></i>Elimina
+      </button>
+    </td>
+  </tr>
+</template>
+
+
+<style>
+td.edit {
+    outline: 2px solid var(--bs-primary);
+    border-radius: 4px;
+    background-color: var(--bs-primary-bg-subtle);
+}
+</style>
+
+<script src="/scripts/envDetails.js"></script>

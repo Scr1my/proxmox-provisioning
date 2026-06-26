@@ -1,0 +1,247 @@
+<style>
+  
+  
+
+  /* ─── Actions dropdown ─── */
+  .actions-dropdown {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+
+.actions-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: #28271f;
+  border: 1px solid #393836;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  min-width: 140px;
+  z-index: 9999;
+  overflow: visible;
+}
+  .actions-menu.show { display: block; }
+
+  .actions-menu button {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    padding: .5rem .875rem;
+    background: none;
+    border: none;
+    color: #cdccca;
+    font-size: .85rem;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+    text-align: left;
+  }
+  .actions-menu button:hover { background: #2d2c2a; }
+  .actions-menu button.danger { color: #dd6974; }
+  .actions-menu button.danger:hover { background: rgba(221,105,116,.12); }
+  .actions-menu .divider { height: 1px; background: #393836; margin: 2px 0; }
+
+  .btn-dots {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    border: 1px solid #393836;
+    background: none;
+    color: #7a7974;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 150ms, color 150ms, border-color 150ms;
+  }
+  .btn-dots:hover, .btn-dots.active { background: #2d2c2a; color: #cdccca; border-color: #4f98a3; }
+
+  /* password */
+  .password-field { font-family: monospace; letter-spacing: .1em; }
+  code:hover { text-decoration: underline; cursor: pointer;}
+</style>
+<tr>
+    <td><span class="badge bg-secondary">{{this.vmid}}</span></td>
+    <td>
+        {{#if (eq this.machine_type "LXC")}}
+            <span class="badge bg-primary badge-type">{{this.machine_type}}</span>
+        {{/if}}
+
+        {{#if (eq this.machine_type "VM")}}
+            <span class="badge bg-info badge-type">{{this.machine_type}}</span>
+        {{/if}}
+    </td>
+    <td>
+        <span id="status-{{this.vmid}}" class="badge bg-secondary">
+            <span class="spinner-border spinner-border-sm"></span>
+            <span role="status">Loading...</span>
+        </span>
+    </td>
+    <td>
+        <code onclick="copyToClipboard('{{this.credential.ip}}')">{{this.ip}}</code>
+    </td>
+    <td onclick="copyToClipboard('{{this.credential.hostname}}')"> {{this.requestMachine.hostname}}</td>
+    <td> {{this.requestMachine.machine_template.name}} </td>
+
+    {{#if this.credential}}
+    {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+        <td onclick="copyToClipboard('{{this.credential.username}}')">{{this.credential.username}}</td>
+    {{/if}}
+    
+    <td>
+        <span class="password-field" onclick="copyToClipboard('{{this.credential.password}}')" id="pwd-{{this.id}}">••••••••••••••••</span>
+        <button class="btn btn-sm btn-outline-secondary ms-1 py-0"
+            onclick="togglePassword({{this.id}}, '{{this.credential.password}}')"
+            title="Mostra/Nascondi">
+            <i class="bi bi-eye" id="eye-{{this.id}}"></i>
+        </button>
+    </td>
+    {{else}}
+    <td colspan="2" class="text-muted fst-italic">No credential</td>
+    {{/if}}
+
+    <td>
+        <button 
+            type="button" 
+            class="btn btn-sm btn-success d-none"
+            id="start-{{this.vmid}}"
+            onclick="changeStatus({{this.vmid}}, {{this.requestMachine.environment_node_id}}, '{{this.machine_type}}', 'start')">
+            <i class="bi bi-play-fill me-1"></i>
+        </button>
+        <button 
+            type="button" 
+            class="btn btn-sm btn-danger d-none"
+            id="shutdown-{{this.vmid}}"
+            onclick="changeStatus({{this.vmid}}, {{this.requestMachine.environment_node_id}}, '{{this.machine_type}}', 'shutdown')">
+            <i class="bi bi-power me-1"></i>
+        </button>
+        <button 
+            type="button" 
+            class="btn btn-sm btn-warning d-none"
+            id="reboot-{{this.vmid}}"
+            onclick="changeStatus({{this.vmid}}, {{this.requestMachine.environment_node_id}}, '{{this.machine_type}}', 'reboot')">
+            <i class="bi bi-bootstrap-reboot me-1"></i>
+        </button>
+    </td>
+    <td>
+        <!-- ⋯ dropdown -->
+        <div class="actions-dropdown">
+          <button class="btn-dots" onclick="toggleActionsMenu(this)" title="Azioni" aria-haspopup="true">
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+          <div class="actions-menu">
+            <button onclick="openConsole({{this.vmid}},{{this.requestMachine.environment_node_id}}, '{{this.machine_type}}'); closeAllMenus()">
+              <i class="bi bi-display"></i> Console
+            </button>
+            <button onclick="openChangeDialog(101); closeAllMenus()">
+              <i class="bi bi-pencil"></i> Change
+            </button>
+            {{#if (hasGroup user (arr "global-admin" "generic-approver" "manager"))}}
+                <div class="divider"></div>
+                <button class="danger" onclick="deleteMachine({{this.vmid}}, {{this.requestMachine.environment_node_id}}, '{{this.machine_type}}'); closeAllMenus()" >
+                <i class="bi bi-trash3"></i> Delete
+                </button>
+            {{/if}}
+          </div>
+        </div>
+      </td>
+</tr>
+
+<script>
+    function togglePassword(id, pwd) {
+        const span = document.getElementById(`pwd-${id}`);
+        const eye  = document.getElementById(`eye-${id}`);
+        if (span.textContent === '••••••••••••••••') {
+            span.textContent = pwd;
+            eye.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            span.textContent = '••••••••••••••••';
+            eye.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed bottom-0 end-0 m-3 alert alert-success py-2 px-3';
+            toast.textContent = 'Copiato!';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        });
+    }
+
+    function openConsole(vmid, nodeId, type) {
+        fetch(`/api/machine/${vmid}/novnc`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nodeId, type })
+        })
+        .then(function(response) {
+            if (!response.ok) throw new Error('HTTP error: ' + response.status);
+            return response.json();
+        })
+        .then(function(data) {
+            document.cookie = `PVEAuthCookie=${data.authTicket}; path=/; domain=192.168.56.16`;
+            window.open(data.url, '_blank');
+        })
+        .catch(function(err) {
+            console.error('Errore apertura console:', err);
+        });
+    }
+
+    function changeStatus(vmid, nodeId, type, status) {
+        fetch(`/api/machine/${vmid}/${status}`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nodeId, type })
+        })
+    }
+
+    /* ── Toggle dropdown ── */
+    function toggleActionsMenu(btn) {
+        const menu = btn.nextElementSibling;
+        const isOpen = menu.classList.contains('show');
+        closeAllMenus();
+        if (!isOpen) {
+        menu.classList.add('show');
+        btn.classList.add('active');
+        }
+    }
+
+    function closeAllMenus() {
+        document.querySelectorAll('.actions-menu.show').forEach(m => m.classList.remove('show'));
+        document.querySelectorAll('.btn-dots.active').forEach(b => b.classList.remove('active'));
+    }
+
+    /* Close on outside click */
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.actions-dropdown')) closeAllMenus();
+    });
+
+  function deleteMachine(vmid, nodeId, type) {
+    if (!confirm(`Are you sure to delete the machine ${vmid}?`)) return;
+
+    fetch(`/api/machine/${vmid}/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nodeId, type })
+    })
+    .then(async (response) => {
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error: ${response.status}`);
+      }
+      window.location.reload();
+    })
+    .catch(err => {
+      console.error('Errore delete machine:', err);
+      alert('Errore durante la cancellazione.');
+    });
+  }
+</script>
