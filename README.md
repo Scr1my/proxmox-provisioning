@@ -25,7 +25,7 @@ Proxmox Provisioning streamlines the full VM provisioning lifecycle through a st
 ### 1. Clone the repository
 
 ```bash
-git clone http://gitsam.cpt.local/2025_2026_progetto/proxmox-provisioning
+git clone https://github.com/Scr1my/proxmox-provisioning
 cd proxmox-provisioning
 ```
 
@@ -55,7 +55,7 @@ The application will be available at `http://localhost:3000` (or the port define
 
 ## Environment Variables
 
-Create a `.env` file in the ./5_Applicativo directory of the project. Below is a description of all available variables:
+Create a `.env` file in the project root. Below is a description of all available variables:
 
 ### Application
 
